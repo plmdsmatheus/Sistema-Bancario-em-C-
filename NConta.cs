@@ -34,17 +34,16 @@ namespace Sistema_Bancario
             Conta atual = Listar(con.ID);
             if (atual != null)
                 contas.Remove(atual);
+            
         }
         public static List<Conta> ListarSaldos()
         {
             contas.Sort();
             return contas;
         }
-        public static Conta ListarSaldo(double saldo)
+        public static List<Conta> ListarSaldo(int idcliente)
         {
-            foreach (Conta obj in contas)
-                if (obj.SaldoConta == saldo) return obj;
-            return null;
+            return contas.Where(x => x.IDCliente == idcliente).ToList();
         }
     }
 }

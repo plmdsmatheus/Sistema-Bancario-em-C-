@@ -58,11 +58,12 @@ namespace Sistema_Bancario
                     {
                         case 01: Cadastro(); break;
                         case 02: ListarClientes(); break;
-                        case 03: VerSaldoCliente(); break;
+                        case 03: SaldoAdmin(); break;
                         case 04: ExcluirCliente(); break;
                         case 05: ContaInserir(); break;
                         case 06: ListarContas(); break;
-                        case 07: ExcluirContas(); break
+                        case 07: ExcluirContas(); break;
+                        //case 08: ListarMovimentações(); break;
 
                     }
                 }
@@ -84,8 +85,9 @@ namespace Sistema_Bancario
                     switch (op)
                     {
                         case 01: Depositar(); break;
-                        case 02: Saldo(); break;
-                        case 03: Sacar(); break;
+                        case 02: Sacar(); break;
+                        case 03: Transferencia(); break;
+                        case 04: Saldo(); break;
                     }
                 }
                 catch (Exception erro)
@@ -118,7 +120,6 @@ namespace Sistema_Bancario
             Console.WriteLine("  05 - Inserir Conta");
             Console.WriteLine("  06 - Listar Contas");
             Console.WriteLine("  07 - Remover Conta");
-            Console.WriteLine("  08 - Movimentações da Conta");
             Console.WriteLine("----------------------");
             Console.WriteLine("  99 - Logout");
             Console.WriteLine("----------------------");
@@ -131,8 +132,9 @@ namespace Sistema_Bancario
             Console.WriteLine($"--- Bem-vindo: {clienteLogado.Nome} ---");
             Console.WriteLine("----------------------");
             Console.WriteLine("  01 - Depositar");
-            Console.WriteLine("  02 - Ver Saldo");
-            Console.WriteLine("  03 - Sacar");
+            Console.WriteLine("  02 - Sacar");
+            Console.WriteLine("  03 - Transferir");
+            Console.WriteLine("  04 - Ver Saldo");
             Console.WriteLine("----------------------");
             Console.WriteLine("  99 - Logout");
             Console.WriteLine("----------------------");
@@ -181,17 +183,12 @@ namespace Sistema_Bancario
             foreach (Cliente obj in NCliente.Listar())
                 Console.WriteLine(obj);
         }
-        public static void VerSaldoCliente()
-        {
-            Console.WriteLine("----- Lista de Saldos dos Clientes Cadastrados -----");
-            foreach (Cliente obj in NCliente.Saldos())
-            {
-                Console.WriteLine(obj);
-            }
-
-        }
+        
         public static void ExcluirCliente()
         {
+            Console.WriteLine("----- Lista de Clientes Cadastrados -----");
+            foreach (Cliente obj in NCliente.Listar())
+                Console.WriteLine(obj);
             Console.WriteLine("Informe o id do Cliente a ser excluído");
             int id = int.Parse(Console.ReadLine());
             Cliente c = new Cliente();
@@ -240,21 +237,27 @@ namespace Sistema_Bancario
             c.ID = IDConta;
 
             NConta.Excluir(c);
-
+            
             Console.WriteLine("Conta excluida com sucesso");
 
         }
-        public static void ListarMovimentações()
+        
+        /*public static void ListarMovimentações()
         {
             Console.WriteLine("-------- Atividades da Conta --------");
-            foreach (Movimentações obj in NMovimentações.Listar())
-                Console.WriteLine($"Transação {obj.ID} em {obj.data} de {NConta.Listar(obj.IDConta).TipoConta}");
+            foreach (Conta obj in NConta.Listar())
+            Console.WriteLine("Digite o id da conta que deseja visualizar extrato");
+            int id = int.Parse(Console.ReadLine());
+            Conta atual = NConta.Listar(id);
+            if (atual != null)
+                foreach (Movimentações obj in NMovimentações.listar(atual))
+                    Console.WriteLine($"Transação {obj.ID} em {obj.data} de {NConta.Listar(obj.IDConta).TipoConta}");
 
-        }
+        }8*/
         public static void Sacar()
         {
             Console.WriteLine("-------- Saque --------");
-            foreach (Conta obj in NConta.Listar())
+            foreach (Conta obj in NConta.ListarSaldo(clienteLogado.Id))
                 Console.WriteLine(obj);
             Console.WriteLine("Digite o id da conta que deseja sacar");
             int id = int.Parse(Console.ReadLine());
@@ -271,7 +274,7 @@ namespace Sistema_Bancario
         public static void Depositar()
         {
             Console.WriteLine("-------- Deposito --------");
-            foreach (Conta obj in NConta.Listar())
+            foreach (Conta obj in NConta.ListarSaldo(clienteLogado.Id))
                 Console.WriteLine(obj);
             Console.WriteLine("Digite o id da conta que deseja depositar");
             int id = int.Parse(Console.ReadLine());
@@ -287,11 +290,33 @@ namespace Sistema_Bancario
         }
         public static void Saldo()
         {
-            NMovimentações.VerSaldo();
+            NMovimentações.VerSaldo(clienteLogado.Id);
         }
-        public static void Historico()
+        public static void Transferencia()
         {
+            Console.WriteLine("-------- Transferencia --------");
+            foreach (Conta obj in NConta.ListarSaldo(clienteLogado.Id))
+                Console.WriteLine(obj);
+            Console.WriteLine("Digite o id da conta a ser debitada");
+            int idd = int.Parse(Console.ReadLine());
+            foreach (Conta obj in NConta.Listar())
+                Console.WriteLine(obj);
+            Console.WriteLine("Digite o id da conta a ser creditada");
+            int idc = int.Parse(Console.ReadLine());
+            Console.WriteLine("Digite o valor a ser transferido");
+            double valor = double.Parse(Console.ReadLine());
+            Movimentações m = new Movimentações();
+            m.IDConta = idd;
+            m.IDConta = idc;
+            m.valor = valor;
 
+            NMovimentações.Transferencia(valor, idd, idc, clienteLogado.Id);
+            Console.WriteLine("Transferencia realizada com sucesso");
+
+        }
+        public static void SaldoAdmin()
+        {
+            NMovimentações.VerSaldoAdmin();
         }
     }
 }

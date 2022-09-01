@@ -18,7 +18,7 @@ namespace Sistema_Bancario
         }
         public override string ToString()
         {
-            return $"{ID} - {TipoConta} - Saldo = R$ {SaldoConta:0.00}";
+            return $"{ID} - {TipoConta} - Saldo = R$ {SaldoConta:0.00} - Cliente: {IDCliente}";
         }
     }
 }

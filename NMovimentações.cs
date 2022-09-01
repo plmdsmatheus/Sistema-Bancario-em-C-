@@ -37,22 +37,34 @@ namespace Sistema_Bancario
         public static void Sacar(double valor, int id)
         {
             foreach (Conta c1 in NConta.Listar())
-                if (id == c1.ID)
-                    foreach (Conta con in NConta.ListarSaldos())
-                        if (valor < con.SaldoConta)
-                            con.SaldoConta -= valor;
+                if (id == c1.ID && valor > 0 && valor <= c1.SaldoConta)
+                    c1.SaldoConta -= valor;
         }
         public static void Depositar(double valor, int id)
         {
             foreach (Conta c1 in NConta.Listar())
-                if (id == c1.ID)
-                    foreach (Conta con in NConta.ListarSaldos())
-                        if (valor > 0)
-                            con.SaldoConta += valor;
+                if (id == c1.ID && valor >0)
+                    c1.SaldoConta += valor;
         }
-        public static void VerSaldo()
+        public static void VerSaldo(int idcliente)
         {
-            foreach (Conta conta in NConta.ListarSaldos())
+            foreach (Conta conta in NConta.ListarSaldo(idcliente))
+
+                Console.WriteLine(conta);
+        }
+        public static void Transferencia(double valor, int idd, int idc, int idcliente)
+        {
+            foreach (Conta c1 in NConta.ListarSaldo(idcliente))
+                if (idd == c1.ID && valor > 0 && valor <= c1.SaldoConta)
+                    c1.SaldoConta -= valor;
+                    foreach (Conta c2 in NConta.Listar())
+                        if (idc == c2.ID && valor > 0)
+                            c2.SaldoConta += valor;
+        }
+        public static void VerSaldoAdmin()
+        {
+            foreach (Conta conta in NConta.Listar())
+
                 Console.WriteLine(conta);
         }
     }
